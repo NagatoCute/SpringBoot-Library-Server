@@ -8,21 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
-// @Service 注解标记这个类为服务层组件。
 @Service
 public class RentalService {
 
     private final RentalRepository rentalRepository;
 
-    // 构造函数注入 RentalRepository。
     @Autowired
     public RentalService(RentalRepository rentalRepository) {
         this.rentalRepository = rentalRepository;
     }
 
-    // @Transactional 注解用于标记这个方法在事务中执行。
     @Transactional(readOnly = true)
     public List<Rental> findAll() {
         return rentalRepository.findAll();
@@ -35,15 +33,13 @@ public class RentalService {
 
     @Transactional
     public Rental save(Rental rental) {
-        // 检查是否已存在相同的借阅记录
-        List<Rental> existingRentals = rentalRepository.findByBookIdAndStartDateAndEndDate(
-                rental.getBook().getId(),
-                rental.getStartDate(),
-                rental.getEndDate()
-        );
+        // 检查是否有重叠的租赁记录
+        List<Rental> existingRentals = rentalRepository.findByBookId(rental.getBook().getId());
 
-        if (!existingRentals.isEmpty()) {
-            throw new RentalConflictException("This book is already rented for the specified period.");
+        for (Rental existingRental : existingRentals) {
+            if (isOverlapping(rental.getStartDate(), rental.getEndDate(), existingRental.getStartDate(), existingRental.getEndDate())) {
+                throw new RentalConflictException("This book is already rented for the specified period.");
+            }
         }
 
         return rentalRepository.save(rental);
@@ -62,5 +58,10 @@ public class RentalService {
     public void delete(Long id) {
         Rental rental = findById(id);
         rentalRepository.delete(rental);
+    }
+
+    // 检查时间段是否重叠
+    private boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
+        return start1.isBefore(end2) && end1.isAfter(start2);
     }
 }
