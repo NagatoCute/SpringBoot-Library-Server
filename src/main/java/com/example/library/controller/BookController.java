@@ -22,35 +22,34 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    // @GetMapping 注解用于映射 HTTP GET 请求。
+    // @GetMapping 注解用于处理 GET 请求，返回所有书籍的列表。
     @GetMapping
     public List<Book> getAllBooks() {
         return bookService.findAll();
     }
 
-    // @GetMapping 注解用于映射 HTTP GET 请求并使用 @PathVariable 提取 URL 路径中的变量。
+    // @GetMapping 注解用于处理 GET 请求，通过书籍 ID 返回特定书籍。
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
-    // @PostMapping 注解用于映射 HTTP POST 请求。
-    // @RequestBody 注解用于从请求体中提取 JSON 数据并转换为 Book 对象。
+    // @PostMapping 注解用于处理 POST 请求，创建新的书籍。
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED) // @ResponseStatus 注解用于设置返回状态码为 201 (Created)。
+    @ResponseStatus(HttpStatus.CREATED)
     public Book createBook(@RequestBody Book book) {
         return bookService.save(book);
     }
 
-    // @PutMapping 注解用于映射 HTTP PUT 请求。
+    // @PutMapping 注解用于处理 PUT 请求，更新现有的书籍。
     @PutMapping("/{id}")
     public Book updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
         return bookService.update(id, bookDetails);
     }
 
-    // @DeleteMapping 注解用于映射 HTTP DELETE 请求。
+    // @DeleteMapping 注解用于处理 DELETE 请求，删除指定的书籍。
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT) // 设置返回状态码为 204 (No Content)。
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBook(@PathVariable Long id) {
         bookService.delete(id);
     }

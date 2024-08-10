@@ -1,11 +1,18 @@
 package com.example.library.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 // @Entity 注解标记这个类为 JPA 实体，将其映射到数据库中的表。
 // @Table 注解指定了表名为 "books"。
+// @Data 注解是 Lombok 提供的，它会自动生成 getter、setter、toString、equals、hashCode 方法。
+// @NoArgsConstructor 注解自动生成无参数构造函数。
 @Entity
 @Table(name = "books")
+@Data
+@NoArgsConstructor
 public class Book {
 
     // @Id 注解标记主键字段。
@@ -21,36 +28,9 @@ public class Book {
     @Column(nullable = false)
     private String author;
 
-    // 构造函数、Getter 和 Setter 方法。
-    public Book() {
-    }
-
-    public Book(String title, String author) {
-        this.title = title;
-        this.author = author;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    // Lombok 的 @Data 注解已经自动生成了以下内容：
+    // - 无参构造函数（由 @NoArgsConstructor 提供）
+    // - 所有字段的 getter 和 setter
+    // - toString 方法
+    // - equals 和 hashCode 方法
 }
